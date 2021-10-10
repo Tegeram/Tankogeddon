@@ -32,7 +32,7 @@ void ACannon::Fire()
 	}
 
 	bIsReadyToFire = false;
-
+	
 	if (Type == ECannonType::FireProjectile)
 	{
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green, TEXT("Fire - projectile"));
@@ -41,10 +41,32 @@ void ACannon::Fire()
 	{
 		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green, TEXT("Fire - trace"));
 	}
+	
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 2.f / FireRate, false);
+}
 
-	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 1.f / FireRate, false);
+void ACannon::FireSpecial()
+{
+	if (!bIsReadyToFire)
+	{
+		return;
+	}
 
+	bIsReadyToFire = false;
 
+	float LocalFireSerias = FireSerias;
+
+	while (LocalFireSerias > 0)
+	{
+		if (Type == ECannonType::FireProjectile)
+		{
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green, TEXT("Fire special - projectile"));
+		}
+
+		GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 2.f / FireRate, false);
+
+		LocalFireSerias -= 1;
+	}
 }
 
 bool ACannon::IsReadyToFire()

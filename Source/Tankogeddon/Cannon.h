@@ -28,8 +28,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
 	float FireDamage = 1.f;
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
-	//int FireCount = 5;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
+	float FireSerias = 5.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
 	ECannonType Type = ECannonType::FireProjectile;
@@ -42,6 +42,8 @@ public:
 	ACannon();
 
 	void Fire();
+
+	void FireSpecial();
 
 	bool IsReadyToFire();
 

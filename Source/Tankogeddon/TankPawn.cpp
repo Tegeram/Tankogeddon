@@ -94,7 +94,33 @@ void ATankPawn::Fire()
 {
 	if (Cannon)
 	{
-		Cannon->Fire();
+		if (FireCount > 0)
+		{
+			Cannon->Fire();
+		
+			FireCount -= 1;
+		}
+		else
+		{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green, TEXT("Count of fire is empty"));
+		}
+	}
+}
+
+void ATankPawn::FireSpecial()
+{
+	if (Cannon)
+	{
+		if (FireCount > 0)
+		{
+			Cannon->FireSpecial();
+
+			FireCount -= 1;
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green, TEXT("Count of fire is empty"));
+		}
 	}
 }
 
