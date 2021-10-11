@@ -50,14 +50,14 @@ void ACannon::FireSpecial()
 	if (!bIsReadyToFire)
 	{
 		return;
-	}
-
-	bIsReadyToFire = false;
+	}	
 
 	float LocalFireSerias = FireSerias;
 
 	while (LocalFireSerias > 0)
 	{
+		bIsReadyToFire = false;
+		
 		if (Type == ECannonType::FireProjectile)
 		{
 			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green, TEXT("Fire special - projectile"));
