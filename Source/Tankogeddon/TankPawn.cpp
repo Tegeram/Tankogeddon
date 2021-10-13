@@ -10,9 +10,6 @@
 #include "Components/ArrowComponent.h"
 #include "Cannon.h"
 
-//DECLARE_LOG_CATEGORY_EXTERN(TankLog, All, All);
-//DEFINE_LOG_CATEGORY(TankLog);
-
 // Sets default values
 ATankPawn::ATankPawn()
 {
@@ -44,7 +41,7 @@ void ATankPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetupCannon();
+	SetupCannon(DefaultCannonClass);
 }
 
 
@@ -54,12 +51,14 @@ void ATankPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	CurrentMoveForwardAxis = FMath::Lerp(CurrentMoveForwardAxis, TargetMoveForwardAxis, MovementSmootheness);
+	//CurrentMoveForwardAxis = FMath::Lerp(CurrentMoveForwardAxis, TargetMoveForwardAxis, MovementSmootheness);
+	CurrentMoveForwardAxis = FMath::FInterpTo(CurrentMoveForwardAxis, TargetMoveForwardAxis, DeltaTime, MovementSmootheness);
 	FVector MoveVector = GetActorForwardVector() * CurrentMoveForwardAxis;
 	FVector NewActorLocation = GetActorLocation() + MoveVector * MoveSpeed * DeltaTime;
-	SetActorLocation(NewActorLocation);	
+	SetActorLocation(NewActorLocation, true);
 	
-	CurrentRotateRightAxis = FMath::Lerp(CurrentRotateRightAxis, TargetRotateRightAxis, RotationSmootheness);
+	//CurrentRotateRightAxis = FMath::Lerp(CurrentRotateRightAxis, TargetRotateRightAxis, RotationSmootheness);
+	CurrentRotateRightAxis = FMath::FInterpTo(CurrentRotateRightAxis, TargetRotateRightAxis, DeltaTime, RotationSmootheness);
 	float Rotation = GetActorRotation().Yaw + RotationSpeed * CurrentRotateRightAxis * DeltaTime;
 	SetActorRotation(FRotator(0, Rotation, 0));
 
@@ -69,10 +68,9 @@ void ATankPawn::Tick(float DeltaTime)
 	FRotator CurrentRotation = TurretMesh->GetComponentRotation();
 	TargetRotation.Roll = CurrentRotation.Roll;
 	TargetRotation.Pitch = CurrentRotation.Pitch;
-	TurretMesh->SetWorldRotation(FMath::Lerp(CurrentRotation, TargetRotation, TurretRotationSmootheness));
+	//TurretMesh->SetWorldRotation(FMath::Lerp(CurrentRotation, TargetRotation, TurretRotationSmootheness));
+	TurretMesh->SetWorldRotation(FMath::RInterpConstantTo(CurrentRotation, TargetRotation, DeltaTime, TurretRotationSmootheness));
 	
-	//FVector NewActorRotation = GetActorLocation() + GetActorRightVector() * MoveRightSpeed * TargetMoveRightAxis * DeltaTime;
-	//SetActorLocation(NewActorRotation);
 }
 
 void ATankPawn::MoveForward(float InAxisValue)
@@ -94,16 +92,7 @@ void ATankPawn::Fire()
 {
 	if (Cannon)
 	{
-		if (FireCount > 0)
-		{
-			Cannon->Fire();
-		
-			FireCount -= 1;
-		}
-		else
-		{
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green, TEXT("Count of fire is empty"));
-		}
+		Cannon->Fire();
 	}
 }
 
@@ -111,35 +100,26 @@ void ATankPawn::FireSpecial()
 {
 	if (Cannon)
 	{
-		if (FireCount > 0)
-		{
-			Cannon->FireSpecial();
-
-			FireCount -= 1;
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green, TEXT("Count of fire is empty"));
-		}
+		Cannon->FireSpecial();
 	}
 }
 
-void ATankPawn::SetupCannon()
+void ATankPawn::SetupCannon(TSubclassOf<class ACannon> InCannonClass)
 {
 	if (Cannon)
 	{
 		Cannon->Destroy();
 	}
 
-	FActorSpawnParameters Params;
-	Params.Instigator = this;
-	Params.Owner = this;
-	Cannon = GetWorld()->SpawnActor<ACannon>(DefaultCannonClass, Params);
-	Cannon->AttachToComponent(CannonSpawnPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	if (InCannonClass)
+	{
+		FActorSpawnParameters Params;
+		Params.Instigator = this;
+		Params.Owner = this;
+		Cannon = GetWorld()->SpawnActor<ACannon>(InCannonClass, Params);
+		Cannon->AttachToComponent(CannonSpawnPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	}
+
 }
 
-//void ATankPawn::MoveRight(float InAxisValue)
-//{
-//	TargetMoveRightAxis = InAxisValue;
-//}
 
