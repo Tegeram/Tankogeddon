@@ -14,16 +14,22 @@ class TANKOGEDDON_API ATankPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-public:
+public:	
 	virtual void BeginPlay() override;
-	// Called to bind functionality to input
-	
-	virtual void SetupInputComponent() override;
 
-private:	
+	virtual void SetupInputComponent() override;
+	virtual void Tick(float DeltaSeconds) override;
+
+private:
+
 	void MoveForward(float InAxisValue);
-	void MoveRight(float inAxisValue);
+	//void MoveRight(float inAxisValue);
+	void RotateRight(float AxisValue);
+	void Fire();
+	void FireSpecial();
 	
 	UPROPERTY()
 	class ATankPawn* TankPawn;
+
+
 };
