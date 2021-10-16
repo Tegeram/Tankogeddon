@@ -5,12 +5,14 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Tankogeddon.h"
+#include "ActorPoolSubsystem.h"
 
 // Sets default values
 AProjectile::AProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 	PrimaryActorTick.TickInterval = 0.005f;
 
 	//USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
@@ -19,13 +21,34 @@ AProjectile::AProjectile()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->OnComponentHit.AddDynamic(this, &AProjectile::OnMeshHit);
+	Mesh->SetHiddenInGame(true);
 	RootComponent = Mesh;
 
 }
 
 void AProjectile::Start()
 {
+	PrimaryActorTick.SetTickFunctionEnable(true);
 	StartPosition = GetActorLocation();
+	Mesh->SetHiddenInGame(false);
+	Mesh->SetHiddenInGame(true);
+}
+
+void AProjectile::Stop()
+{
+	PrimaryActorTick.SetTickFunctionEnable(false);
+	Mesh->SetHiddenInGame(true);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	UActorPoolSubsystem* Pool = GetWorld()->GetSubsystem<UActorPoolSubsystem>();
+	if (Pool->IsActorInPool(this))
+	{
+		Pool->ReturnActor(this);
+	}
+	else
+	{
+		Destroy();
+	}
 }
 
 // Called every frame
@@ -38,7 +61,8 @@ void AProjectile::Tick(float DeltaTime)
 
 	if (FVector::Dist(GetActorLocation(), StartPosition) > FireRange)
 	{
-		Destroy();
+		//Destroy();
+		Stop();
 	}
 }
 
@@ -50,5 +74,6 @@ void AProjectile::OnMeshHit(class UPrimitiveComponent* HittedComp, class AActor*
 	{
 		OtherActor->Destroy();
 	}
-	Destroy();
+	//Destroy();
+	Stop();
 }

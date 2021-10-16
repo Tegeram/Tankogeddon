@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "Cannon.h"
 
 // Sets default values
 AAmmoBox::AAmmoBox()
@@ -28,7 +29,16 @@ void AAmmoBox::OnMeshOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 	ATankPawn* PlayerPawn = Cast<ATankPawn>(GetWorld()->GetFirstPlayerController()->GetPawn());
 	if (OtherActor == PlayerPawn)
 	{
-		PlayerPawn->SetupCannon(CannonClass);
+		
+		ACannon* Cannon = PlayerPawn->GetSelectedCannon();
+		if (Cannon && Cannon->GetClass() == CannonClass)
+		{
+			Cannon->AddAmmo(NumAmmo);
+		}
+		else
+		{
+			PlayerPawn->SetupCannon(CannonClass);
+		}
 		Destroy();
 	}
 }

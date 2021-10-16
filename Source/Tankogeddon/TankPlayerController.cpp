@@ -4,6 +4,7 @@
 #include "TankPlayerController.h"
 #include "DrawDebugHelpers.h"
 #include "TankPawn.h"
+#include "ActorPoolSubsystem.h"
 
 void ATankPlayerController::BeginPlay()
 {
@@ -22,6 +23,7 @@ void ATankPlayerController::SetupInputComponent()
 	InputComponent->BindAxis("RotateRight", this, &ATankPlayerController::RotateRight);
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ATankPlayerController::Fire);
 	InputComponent->BindAction("FireSpecial", IE_Pressed, this, &ATankPlayerController::FireSpecial);
+	InputComponent->BindAction("SwitchCannon", IE_Pressed, this, &ATankPlayerController::SwitchCannon);
 
 }
 
@@ -55,6 +57,19 @@ void ATankPlayerController::FireSpecial()
 	{
 		TankPawn->FireSpecial();
 	}
+}
+
+void ATankPlayerController::SwitchCannon()
+{
+	if (TankPawn)
+	{
+		TankPawn->SwitchCannon();
+	}
+}
+
+void ATankPlayerController::DumpActorPoolSubsystem()
+{
+	GetWorld()->GetSubsystem<UActorPoolSubsystem>()->DumpPoolStats();
 }
 
 void ATankPlayerController::Tick(float DeltaSeconds)

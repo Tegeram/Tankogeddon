@@ -46,6 +46,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (EditCondition = "Type == ECannonType::FireProjectile", EditConditionHides), Category = "Fire params")
 	TSubclassOf<class AProjectile> ProjectileClass;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (EditCondition = "Type == ECannonType::FireRocket", EditConditionHides), Category = "Fire params")
+	TSubclassOf<class AProjectile> RocketClass;
+
 private:
 	FTimerHandle ReloadTimerHandle;
 	FTimerHandle SeriesTimerHandle;
@@ -59,6 +62,8 @@ public:
 
 	bool IsReadyToFire();
 	bool HasSpecialFire() const;
+	void SetVisibility(bool bIsVisible);
+	void AddAmmo(int32 InNumAmmo);
 
 protected:
 	virtual void BeginPlay() override;

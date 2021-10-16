@@ -79,9 +79,18 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret")
 	void FireSpecial();
 
+	UFUNCTION(BlueprintCallable, Category = "Turret")
+	void SwitchCannon();
+
+	UFUNCTION(BlueprintCallable, Category = "Turret")
+	class ACannon* GetSelectedCannon() const;
+
 private:
 	UPROPERTY()
-	class ACannon* Cannon = nullptr;
+	class ACannon* SelectedCannon = nullptr;
+
+	UPROPERTY()
+	class ACannon* UnselectedCannon = nullptr;
 
 	float TargetMoveForwardAxis = 0.f;
 	float CurrentMoveForwardAxis = 0.f;

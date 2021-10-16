@@ -90,25 +90,25 @@ void ATankPawn::SetTurretTargetPosition(const FVector& TargetPosition)
 
 void ATankPawn::Fire()
 {
-	if (Cannon)
+	if (SelectedCannon)
 	{
-		Cannon->Fire();
+		SelectedCannon->Fire();
 	}
 }
 
 void ATankPawn::FireSpecial()
 {
-	if (Cannon)
+	if (SelectedCannon)
 	{
-		Cannon->FireSpecial();
+		SelectedCannon->FireSpecial();
 	}
 }
 
 void ATankPawn::SetupCannon(TSubclassOf<class ACannon> InCannonClass)
 {
-	if (Cannon)
+	if (SelectedCannon)
 	{
-		Cannon->Destroy();
+		SelectedCannon->Destroy();
 	}
 
 	if (InCannonClass)
@@ -116,10 +116,28 @@ void ATankPawn::SetupCannon(TSubclassOf<class ACannon> InCannonClass)
 		FActorSpawnParameters Params;
 		Params.Instigator = this;
 		Params.Owner = this;
-		Cannon = GetWorld()->SpawnActor<ACannon>(InCannonClass, Params);
-		Cannon->AttachToComponent(CannonSpawnPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		SelectedCannon = GetWorld()->SpawnActor<ACannon>(InCannonClass, Params);
+		SelectedCannon->AttachToComponent(CannonSpawnPoint, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	}
+}
+
+void  ATankPawn::SwitchCannon() //только не понял как сделать смену трех пушкек 
+{
+	Swap(SelectedCannon, UnselectedCannon);
+	if (SelectedCannon)
+	{
+		SelectedCannon->SetVisibility(true);
 	}
 
+	if (UnselectedCannon)
+	{
+		UnselectedCannon->SetVisibility(false);
+	}
+}
+
+ACannon* ATankPawn::GetSelectedCannon() const
+{
+	return SelectedCannon;
 }
 
 
