@@ -18,8 +18,8 @@ AActor* UActorPoolSubsystem::RetreiveActor(UClass* Class, const FTransform& Tran
 	if (Pool && Pool->Num() > 0)
 	{
 		Result = Pool->Pop();
-		FVector CorrectedeScale = Transform.GetScale3D() * Result->GetActorScale();
-		Result->SetActorTransform(FTransform(Transform.GetRotation(), Transform.GetLocation(), CorrectedeScale), false, nullptr, ETeleportType::ResetPhysics);
+		FVector CorrectedScale = Transform.GetScale3D() * Result->GetActorScale();
+		Result->SetActorTransform(FTransform(Transform.GetRotation(), Transform.GetLocation(), CorrectedScale), false, nullptr, ETeleportType::ResetPhysics);
 		Result->SetActorTickEnabled(true);
 	}
 	else
@@ -39,7 +39,7 @@ AActor* UActorPoolSubsystem::RetreiveActor(UClass* Class, const FTransform& Tran
 
 void UActorPoolSubsystem::ReturnActor(AActor* Actor)
 {
-	if (!Actor || IsActorInPool(Actor))
+	if (!Actor || !IsActorInPool(Actor))
 	{
 		return;
 	}

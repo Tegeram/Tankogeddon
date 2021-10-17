@@ -5,7 +5,9 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Tankogeddon.h"
+#include "Damageable.h"
 #include "ActorPoolSubsystem.h"
+
 
 // Sets default values
 AProjectile::AProjectile()
@@ -31,7 +33,7 @@ void AProjectile::Start()
 	PrimaryActorTick.SetTickFunctionEnable(true);
 	StartPosition = GetActorLocation();
 	Mesh->SetHiddenInGame(false);
-	Mesh->SetHiddenInGame(true);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void AProjectile::Stop()
@@ -70,9 +72,23 @@ void AProjectile::OnMeshHit(class UPrimitiveComponent* HittedComp, class AActor*
 {
 	UE_LOG(LogTankogeddon, Warning, TEXT("Projectile %s collided with %s. "), *GetName(), *OtherActor->GetName());
 
+	if (OtherActor == GetInstigator())
+	{
+		Stop();
+		return;
+	}
+
 	if (OtherActor && OtherComp && OtherComp->GetCollisionObjectType() == ECC_Destructible)
 	{
 		OtherActor->Destroy();
+	}
+	else if (IDamageable* Damageable = Cast<IDamageable>(OtherActor))
+	{
+		FDamageData DamageData;
+		DamageData.DamageValue = Damage;
+		DamageData.Instigator = GetInstigator();
+		DamageData.DamageMaker = this;
+		Damageable->TakeDamage(DamageData);
 	}
 	//Destroy();
 	Stop();

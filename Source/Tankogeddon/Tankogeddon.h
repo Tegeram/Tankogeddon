@@ -4,4 +4,4 @@
 
 #include "CoreMinimal.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogTankogeddon, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogTankogeddon, All, All);

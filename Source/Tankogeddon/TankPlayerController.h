@@ -29,7 +29,7 @@ private:
 	void SwitchCannon();
 
 	UFUNCTION(exec)
-	void DumpActorPoolSubsystem();
+	void DumpActorPoolSubsystemStats();
 	
 	UPROPERTY()
 	class ATankPawn* TankPawn;

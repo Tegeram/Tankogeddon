@@ -5,6 +5,7 @@
 #include "Cannon.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+//#include "Damageable.h"
 #include "TankPawn.generated.h"
 
 
@@ -98,4 +99,6 @@ private:
 	float CurrentRotateRightAxis = 0.f;
 
 	FVector TurretTargetPosition;
+
+	//virtual void TakeDamage(const FDamageData& DamageData) override;
 };

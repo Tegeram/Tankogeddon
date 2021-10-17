@@ -31,6 +31,7 @@ private:
 	void OnActorDestroyed(AActor* Actor);
 
 	UPROPERTY()
-		TArray<class AActor*> Actors;
+	TArray<class AActor*> Actors;
+	
 	TMap<UClass*, TArray<class AActor*>> InactiveActors;
 };

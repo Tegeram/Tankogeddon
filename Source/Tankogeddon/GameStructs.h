@@ -12,3 +12,19 @@ enum class ECannonType : uint8
     FireRocket = 2 UMETA(Display = "Use rocket")
 };
 
+USTRUCT(BlueprintType)
+struct FDamageData
+{
+    GENERATED_BODY()
+
+    UPROPERTY()
+    float DamageValue;
+
+    UPROPERTY()
+    class AActor* Instigator;
+
+    UPROPERTY()
+    class AActor* DamageMaker;
+
+};
+

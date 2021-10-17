@@ -31,7 +31,7 @@ ACannon::ACannon()
 
 void ACannon::Fire()
 {
-	if (!IsReadyToFire() )
+	if (!IsReadyToFire())
 	{
 		return;
 	}
@@ -39,8 +39,56 @@ void ACannon::Fire()
 	bIsReadyToFire = false;
 	--NumAmmo;
 	
-	ShotsLeft = 1;
-	Shot();
+	if (Type == ECannonType::FireProjectile)
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green, TEXT("Fire special - projectile"));
+
+		//AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, ProjectileSpawnPoint->GetComponentLocation(), ProjectileSpawnPoint->GetComponentRotation());
+		UActorPoolSubsystem* Pool = GetWorld()->GetSubsystem<UActorPoolSubsystem>();
+		FTransform SpawnTransform(ProjectileSpawnPoint->GetComponentRotation(), ProjectileSpawnPoint->GetComponentLocation(), FVector::OneVector);
+		AProjectile* Projectile = Cast<AProjectile>(Pool->RetreiveActor(ProjectileClass, SpawnTransform));
+		if (Projectile)
+		{
+			Projectile->SetInstigator(GetInstigator());
+			Projectile->Start();
+		}
+
+	}
+	else if (Type == ECannonType::FireTrace)
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 2.f, FColor::Green, TEXT("Fire special - trace"));
+
+		FHitResult HitResult;
+		FVector TraceStart = ProjectileSpawnPoint->GetComponentLocation();
+		FVector TraceEnd = TraceStart + ProjectileSpawnPoint->GetForwardVector() * FireRange;
+		FCollisionQueryParams TraceParams = FCollisionQueryParams(FName(TEXT("FireTrace")), true, this);
+		//TraceParams.bTraceComplex = true;
+		TraceParams.bReturnPhysicalMaterial = false;
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, TraceParams))
+		{
+			DrawDebugLine(GetWorld(), TraceStart, HitResult.Location, FColor::Red, false, 0.5f, 0, 5.f);
+			if (HitResult.Actor.IsValid() && HitResult.Component.IsValid(), HitResult.Component->GetCollisionObjectType() == ECC_Destructible)
+			{
+				HitResult.Actor->Destroy();
+			}
+		}
+		else
+		{
+			DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 0.5f, 0, 5.f);
+		}
+	}
+	else if (Type == ECannonType::FireRocket)
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 10.f, FColor::Green, TEXT("Fire - rocket"));
+
+		UActorPoolSubsystem* Pool = GetWorld()->GetSubsystem<UActorPoolSubsystem>();
+		FTransform SpawnTransform(ProjectileSpawnPoint->GetComponentRotation(), ProjectileSpawnPoint->GetComponentLocation(), FVector::OneVector);
+		AProjectile* Projectile = Cast<AProjectile>(Pool->RetreiveActor(RocketClass, SpawnTransform));
+		{
+			Projectile->SetInstigator(GetInstigator());
+			Projectile->Start();
+		}
+	}
 
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ACannon::Reload, 10.f / FireRate, false);
 	UE_LOG(LogTankogeddon, Log, TEXT("Fire! Ammo left: %d"), NumAmmo);
@@ -123,6 +171,7 @@ void ACannon::Shot()
 		AProjectile* Projectile = Cast<AProjectile>(Pool->RetreiveActor(ProjectileClass,SpawnTransform));
 		if (Projectile)
 		{
+			Projectile->SetInstigator(GetInstigator());
 			Projectile->Start();
 		}
 	}
@@ -157,6 +206,7 @@ void ACannon::Shot()
 		FTransform SpawnTransform(ProjectileSpawnPoint->GetComponentRotation(), ProjectileSpawnPoint->GetComponentLocation(), FVector::OneVector);
 		AProjectile* Projectile = Cast<AProjectile>(Pool->RetreiveActor(RocketClass, SpawnTransform));
 		{
+			Projectile->SetInstigator(GetInstigator());
 			Projectile->Start();
 		}
 	}

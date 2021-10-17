@@ -67,7 +67,7 @@ void ATankPlayerController::SwitchCannon()
 	}
 }
 
-void ATankPlayerController::DumpActorPoolSubsystem()
+void ATankPlayerController::DumpActorPoolSubsystemStats()
 {
 	GetWorld()->GetSubsystem<UActorPoolSubsystem>()->DumpPoolStats();
 }
