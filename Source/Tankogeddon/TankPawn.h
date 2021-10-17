@@ -5,6 +5,7 @@
 #include "Cannon.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+//#include "Damageable.h"
 #include "TankPawn.generated.h"
 
 
@@ -36,9 +37,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
 	float MoveSpeed = 100.f;
 
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
-	//float MoveRightSpeed = 100.f;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement|Speed")
 	float RotationSpeed = 100.f;
 
@@ -51,9 +49,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret")
 	float TurretRotationSmootheness = 0.5f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Fire params")
-	float FireCount = 20.f;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Turret")
 	TSubclassOf<class ACannon> DefaultCannonClass;
 
@@ -64,7 +59,8 @@ protected:
 	class ATankPlayerController* TankController;
 
 public:
-	void SetupCannon();
+	UFUNCTION(BlueprintCallable, Category = "Turret")
+	void SetupCannon(TSubclassOf<class ACannon> InCannonClass);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -84,18 +80,25 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Turret")
 	void FireSpecial();
 
-	//UFUNCTION(BlueprintCallable, Category = "Movement")
-	//void MoveRight(float InAxisValue);
+	UFUNCTION(BlueprintCallable, Category = "Turret")
+	void SwitchCannon();
+
+	UFUNCTION(BlueprintCallable, Category = "Turret")
+	class ACannon* GetSelectedCannon() const;
 
 private:
 	UPROPERTY()
-	class ACannon* Cannon = nullptr;
+	class ACannon* SelectedCannon = nullptr;
+
+	UPROPERTY()
+	class ACannon* UnselectedCannon = nullptr;
 
 	float TargetMoveForwardAxis = 0.f;
 	float CurrentMoveForwardAxis = 0.f;
-	//float TargetMoveRightAxis = 0.f;
 	float TargetRotateRightAxis = 0.f;
 	float CurrentRotateRightAxis = 0.f;
 
 	FVector TurretTargetPosition;
+
+	//virtual void TakeDamage(const FDamageData& DamageData) override;
 };

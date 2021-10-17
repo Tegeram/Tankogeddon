@@ -4,6 +4,7 @@
 #include "TankPlayerController.h"
 #include "DrawDebugHelpers.h"
 #include "TankPawn.h"
+#include "ActorPoolSubsystem.h"
 
 void ATankPlayerController::BeginPlay()
 {
@@ -20,9 +21,9 @@ void ATankPlayerController::SetupInputComponent()
 
 	InputComponent->BindAxis("MoveForward", this, &ATankPlayerController::MoveForward);
 	InputComponent->BindAxis("RotateRight", this, &ATankPlayerController::RotateRight);
-	//InputComponent->BindAxis("MoveRight", this, &ATankPlayerController::MoveRight);
 	InputComponent->BindAction("Fire", IE_Pressed, this, &ATankPlayerController::Fire);
 	InputComponent->BindAction("FireSpecial", IE_Pressed, this, &ATankPlayerController::FireSpecial);
+	InputComponent->BindAction("SwitchCannon", IE_Pressed, this, &ATankPlayerController::SwitchCannon);
 
 }
 
@@ -58,6 +59,19 @@ void ATankPlayerController::FireSpecial()
 	}
 }
 
+void ATankPlayerController::SwitchCannon()
+{
+	if (TankPawn)
+	{
+		TankPawn->SwitchCannon();
+	}
+}
+
+void ATankPlayerController::DumpActorPoolSubsystemStats()
+{
+	GetWorld()->GetSubsystem<UActorPoolSubsystem>()->DumpPoolStats();
+}
+
 void ATankPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -73,14 +87,7 @@ void ATankPlayerController::Tick(float DeltaSeconds)
 	TurretTargetDirection.Z = 0.f;
 	TurretTargetDirection.Normalize();
 	FVector TurretTargetPosition = TankPawn->GetActorLocation() + TurretTargetDirection * 1000.f;
-	DrawDebugLine(GetWorld(), TankPawn->GetActorLocation(), TurretTargetPosition, FColor::Green, false, 0.1f, 0, 5.f);
+	//DrawDebugLine(GetWorld(), TankPawn->GetActorLocation(), TurretTargetPosition, FColor::Green, false, 0.1f, 0, 5.f);
 	TankPawn->SetTurretTargetPosition(TurretTargetPosition);
 }
 
-//void ATankPlayerController::MoveRight(float InAxisValue) 
-//{
-//	if (TankPawn)
-//	{
-//		TankPawn->MoveRight(InAxisValue);
-//	}
-//}
