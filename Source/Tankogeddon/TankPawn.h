@@ -5,12 +5,12 @@
 #include "Cannon.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-//#include "Damageable.h"
+#include "Damageable.h"
 #include "TankPawn.generated.h"
 
 
 UCLASS()
-class TANKOGEDDON_API ATankPawn : public APawn
+class TANKOGEDDON_API ATankPawn : public APawn, public ADamageable
 {
 	GENERATED_BODY()
 
@@ -99,6 +99,14 @@ private:
 	float CurrentRotateRightAxis = 0.f;
 
 	FVector TurretTargetPosition;
+	
+protected:
+	UFUNCTION(BlueprintNativeEvent, Category = "Health")
+	void OnHealthChanged(float Damage);
 
-	//virtual void TakeDamage(const FDamageData& DamageData) override;
+	UFUNCTION(BlueprintNativeEvent, Category = "Health")
+	void OnDie();
+
+public:
+	virtual void TakeDamage(const FDamageData& DamageData) override;
 };
