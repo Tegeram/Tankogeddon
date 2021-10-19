@@ -121,7 +121,7 @@ void ATankPawn::SetupCannon(TSubclassOf<class ACannon> InCannonClass)
 	}
 }
 
-void  ATankPawn::SwitchCannon() //òîëüêî íå ïîíÿë êàê ñäåëàòü ñìåíó òðåõ ïóøêåê 
+void  ATankPawn::SwitchCannon() //Ã²Ã®Ã«Ã¼ÃªÃ® Ã­Ã¥ Ã¯Ã®Ã­Ã¿Ã« ÃªÃ Ãª Ã±Ã¤Ã¥Ã«Ã Ã²Ã¼ Ã±Ã¬Ã¥Ã­Ã³ Ã²Ã°Ã¥Ãµ Ã¯Ã³Ã¸ÃªÃ¥Ãª 
 {
 	Swap(SelectedCannon, UnselectedCannon);
 	if (SelectedCannon)
@@ -140,4 +140,18 @@ ACannon* ATankPawn::GetSelectedCannon() const
 	return SelectedCannon;
 }
 
+oid ATurret::OnHealthChanged_Implementation(float Damage)
+{
+	UE_LOG(LogTankogeddon, Log, TEXT("Turret %s taked damage:%f "), *GetName(), Damage);
+}
+
+void ATurret::OnDie_Implementation()
+{
+	Destroy();
+}
+
+void ATurret::TakeDamage(const FDamageData& DamageData)
+{
+	HealthComponent->TakeDamage(DamageData);
+}
 
